@@ -12,6 +12,7 @@
      var spins = 0; 
      var first_name = "Branson";
      var last_name = "Suzuki";
+     var over_half = false;
     </script> 
     <link rel="stylesheet"
     href="products-style.css">
@@ -25,13 +26,66 @@
     Hits:<span id="hits_span">1</span>
     Spins:<span id="spins_span">2</span>
     Hit/Spin:<span id="hit_spin_span">0</span>
-    
+    You win:<span id="win_span">pending...</span>
     </p>    
     </header>
 
     <div><main>
-        <section class="item" onmouseover="this.className='item rotate'; spins++; spins_span.innerHTML=spins; hit_spin_span.innerHTML=(hits_span.innerHTML/spins_span.innerHTML).toFixed(2);" 
-        onclick="this.className='item'; hits++; hits_span.innerHTML = hits; hit_spin_span.innerHTML=(hits_span.innerHTML/spins_span.innerHTML).toFixed(2)">
+    <section class="item" 
+    onmouseover="
+    if(!this.className.includes('rotate')) {
+            this.className='item rotate'; 
+            spins_span.innerHTML = ++spins;
+    }
+        
+
+        hit_spin_span.innerHTML=(hits/spins).toFixed(2); 
+        win_span.innerHTML = (spins<2*hits) && (hits<spins) || over_half;
+        win_span.innerHTML = over_half;
+        // -- Winning progress depends on hits/spins
+
+hits_spins_ratio = hits/spins;
+if ( hits_spins_ratio > 0 ) {
+    progress = 'On your way!';}
+else if( hits_spins_ratio >= 0.25 ) {
+    progress = 'Almost there!';}
+else if( hits_spins_ratio >= 0.5 ) { 
+    progress = 'You win!';}
+else { 
+    progress = 'Get going!' ;
+}
+win_span.innerHTML = progress;
+" 
+        
+    onclick="
+    if(this.className.includes('rotate')){
+        this.className='item'; 
+        hits_span.innerHTML = ++hits;
+    } else {
+        this.className='item rotate';
+    }
+        hit_spin_span.innerHTML=(hits/spins).toFixed(2);
+        win_span.innerHTML = (spins<2*hits) && (hits<spins) || over_half;
+        win_span.innerHTML = over_half; 
+        // -- Winning progress depends on hits/spins
+hits_spins_ratio = hits/spins;
+if ( hits_spins_ratio > 0 ) {
+    progress = 'On your way!';
+    if ( hits_spins_ratio >= 0.25 ) {
+        progress = 'Almost there!';
+        if ( hits_spins_ratio >= 0.5 ) {
+            if( hits < spins) { 
+                progress = 'You win!';
+            }
+        }
+    }
+}
+else {
+    progress = 'Get going!' ;
+}
+win_span.innerHTML = progress;
+";>
+
         <h2>HTC</h2>
         <p>$40.00</p>,
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg">
@@ -59,27 +113,17 @@
     
 </main></div>
     <h1>Your One Stop Phone Shop</h1>
-  
-    <footer>
-   <script>
-    const line = 1;
-    const line2 = 2;
-    const line3 = 3;
-    const now = new Date();
+<script>
+    var month
+    var num_days
 
-    document.write(`
-        <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
-    <tbody>
-    <tr><th colspan="2"><h1>Your One Stop For Used Phones - ${first_name[0]}. ${last_name[0]}'s</h1></th></tr>
-    <tr><td>${line}</td><td><br />Copyright @ ${first_name} ${last_name}</td></tr>
-    <tr><td>${line2}</td><td>${now.getFullYear()}</td></tr>
-    <tr><td>${line3}</td><td>${((now.getHours() + 11) % 12 + 1)}:${(now.getMinutes())} ${((now.getHours() < 12)?'AM':'PM')}</td></tr>
-    <tbody>
-</table>
-`);
-   </script>
-  </footer>
+    switch(month){
+        case ""
+    }
 
+
+
+</script>
 </body>
 </html>
 
