@@ -2,62 +2,55 @@
     /*We are making a sales receipt*/
 
     //Product Data
-
+    var product_quantities = [1,2,3,4,5];
+    product_quantities.pop()
     // Product 1
     var product1 = {
-     product_name: 'Gillette Sensor 3 Razor',
-     number_of_products: 2,
-     price: 1.23,
-    }
+    'Productname': 'Gillette Sensor 3 Razor',
+    'quantity': product_quantities[0],
+    'price': 1.23,
+    "SKU#": 1234,
+    };
 
      // Product 2
-     var product2 = {
-     product_name: 'Barbasol Shaving Cream',
-     number_of_products: 1,
-     price: 2.64,
-     }
+    var item2 = 'Barbasol Shaving Cream';
+    var quantity2 = product_quantities[1];
+    var price2 = 2.64;
 
      // Product 3
-     var product3 = {
-     product_name: 'Nautica Cologne',
-     number_of_products: 1,
-     price: 6.17,
-     }
+    var item3 = 'Nautica Cologne';
+    var quantity3 = 1;
+    var price3 = 6.17;
 
      // Product 4
-     var product4 = {
-     product_name: 'Rubbing Alcohol',
-     number_of_products: 3,
-     price: 0.98,
-
-     } 
+    var item4 = 'Rubbing Alcohol';
+    var quantity4 = 3;
+    var price4 = 0.98;
 
      // Product 5
-     var product5 = {
-     product_name: 'Colgate Classic Toothbrush',
-     number_of_products: 12,
-     price: 1.89,
-     }
+    var item5 = 'Colgate Classic Toothbrush';
+    var quantity5 = 12;
+    var price5 = 1.89;
 
      // Compute extended prices
 
-     var extended_price1 = product1.number_of_products*product1["price"];
-     var extended_price2 = number_of_products2*price2;
-     var extended_price3 = number_of_products3*price3;
-     var extended_price4 = number_of_products4*price4;
-     var extended_price5 = number_of_products5*price5;
+    var extended_price1 = product1.amount*product1["price"];
+    var extended_price2 = quantity2*price2;
+    var extended_price3 = quantity3*price3;
+    var extended_price4 = quantity4*price4;
+    var extended_price5 = quantity5*price5;
 
      // Subtotal
 
-     var subtotal = extended_price1+extended_price2+extended_price3+extended_price4+extended_price5;
+    var subtotal = extended_price1+extended_price2+extended_price3+extended_price4+extended_price5;
 
      //Sales Tax
 
-     var sales_tax=subtotal*0.0575
+    var sales_tax=subtotal*0.0575
 
      //Grand total
     
-     var grand_total=sales_tax+subtotal
+    var grand_total=sales_tax+subtotal
 
 </script>
 <!DOCTYPE html>
@@ -69,6 +62,18 @@
     <title>Document</title>
 </head>
 <body>
+  <table style="border: 1px solid black;text-align: center;">
+    <tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product #</th><th>Quantity</th></tr>
+    <script>
+    for(var i=0; i<product_quantities.length; i++){
+    document.write(`  
+    <tr style="border: 1px solid black;">
+      <td style="border: 1px solid black;">${i+1}</td>
+      <td>${product_quantities[i]}</td>
+      </tr>`);}
+    </script>
+   
+    </table>
     <div>
     <table border="2">
     <tbody>
@@ -81,8 +86,8 @@
         <script>
         document.write(`
         <tr>
-          <td width="43%">${product1}</td>
-          <td align="center" width="11%">${product1.number_of_products}</td>
+          <td width="43%">${product1.Productname}</td>
+          <td align="center" width="11%">${product1.amount}</td>
           <td width="13%">\$${product1.price}</td>
           <td width="54%">\$${extended_price1}</td>
         </tr>
