@@ -1,3 +1,5 @@
+var i = 1
+
 var products =
 [
 
@@ -31,3 +33,6 @@ var products =
     "image": "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg",
     },
 ]
+
+
+console.log("Product variables loaded...");

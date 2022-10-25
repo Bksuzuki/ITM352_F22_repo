@@ -20,7 +20,7 @@ const monthkey = {
 if (month=="January"||month=="February"){
     year=year-1;
 }
-else {};
+
 
 step2 = parseInt(year/4)+year;
 
