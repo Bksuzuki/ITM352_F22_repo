@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+   
+<script src="./products.js" type="text/javascript"></script>
+<script>
+  //trying to get the params from the server in order to make an error alerts
+  let params = (new URL(document.location)).searchParams;
+  Window.onload = function () {
+        //getting any errors from my query string
+        if (params.has('errors_alerts')) {
+            alert("Alert!");
+            }
+        }
+    ;
+
+</script>
+<head>
+  <title>The Men's Watch Factory</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--Template taken from w3 Schools-->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+  <link rel="stylesheet" href="products_home_style.css">
+  <style>
+   
+</style>
+</head>
+<body>
+
+<!-- Title -->
+  <div class="container text-center">
+    <h1>The Men's Watch Factory </h1>
+    <h4>Premium Watches for Business Professionals</h4>
+  </div>
+
+
+<!-- Start of form for server post -->
+<form name="qtyTextbox" action="./purchase" method="POST">
+
+<!-- Product Information -->
+<main>
+<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+<div class="w3-row-padding w3-padding-16 w3-center" id="watches">
+<div class = "items"><main>
+    <script>
+        // Print items on pavge
+        // Taken from SmartPhoneProducts3 and edited to include other attributes
+        for(i = 0; i < products.length; i++) {
+            document.write(`
+      <section class="item">
+                <h2>${products[i].name}</h2>
+                <img src="${products[i].image}">
+                <p>${products[i].description}</p>
+                <p>Price: $${products[i].price}</p>
+                <label id="quantity${i}_label"}">Quantity</label>
+                <input type="text" placeholder="0" name="quantity${i}">
+                <p>Stock Available: ${products[i].amt_ava}</p>
+      </section>
+            `);
+        }
+    </script>
+    </main>
+        </div>
+    </div>
+    </div>
+    </main>
+<footer class="container-fluid text-center">
+    <!--button to submit HTML form-->
+    <input type="submit" class="button" value="Purchase" name="purchase_submit" onclick="">
+</footer>
+</form>
+</body>
+</html>
