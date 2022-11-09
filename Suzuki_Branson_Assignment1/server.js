@@ -41,20 +41,21 @@ app.post("/purchase", function(request, response, next){
     var has_quantities = false;
     var errors = {};
     //advice for later: serialize error object; find better way to pass errors back and forth for Assignment2
+    //Help from Professor Port
     for (let i in products) {
         q = request.body['quantity' + i];
         if (typeof q != 'undefined') {
             console.log(q);
-            // this code is to check whether or not any quantities have been selected by the user
+            // Check whether there are even quantities that have been inputted
             if(q>0) {
                 has_quantities = true;
             }
-            // This checks if the inputted quantites are valid pieces of data
+            // Validates data with isNonNegInt function
             if(isNonNegInt(q,false) == false) {
                 errors['quantity_error'+i] = isNonNegInt(q,true);
             }
-            if (q > products[i].amt_ava) {  //if quantity entered is greater than quantity available 
-                errors['stock_outage' + i ] = `We currenly don't have ${(q)} ${products[i].name}s. Please check back later!`
+            if (q > products[i].amt_ava) {  //Check to see if there is enough stock left
+                errors['stock_outage' + i ] = `We currently don't have ${(q)} ${products[i].name}s. Please check back later!`
             }
         }
     }
