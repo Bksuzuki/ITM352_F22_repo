@@ -19,13 +19,8 @@ function alertmessage (){
             document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('quantity_error'+i)}</font>`;
         }   
         //Checking if stock error exists and if so then displaying under text box in red
-        else if (params.has('stock_outage' + i)&('quantity_error'+i)) {
-            purchase_button.value = "Please only select quantity that is in stock and enter a valid quantity!";
-            purchase_button.style.color = "red";
-            document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('stock_outage' + i)&('quantity_error'+i)}</font>`;
-        }
         else if (params.has('stock_outage' + i)) {
-            purchase_button.value = "Please only select quantity that is in stock!";
+            purchase_button.value = "Please only select quantities that are in stock!";
             purchase_button.style.color = "red";
             document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('stock_outage' + i)}</font>`;
         }
