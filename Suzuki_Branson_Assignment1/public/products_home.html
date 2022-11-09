@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
-   
+<!--loading in product information for use-->
 <script src="./products.js" type="text/javascript"></script>
 <script>
-    //Help form Daniel Port on alert message section
+//Help form Daniel Port on alert message section
 const params = (new URL(document.location)).searchParams;
-
+//creating function for use in window onload
 function alertmessage (){
     var submit_button_msg = "";
    for (let i in products) {
