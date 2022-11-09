@@ -1,7 +1,7 @@
 
 // Layout taken from Assignment 1 Workshop Module//
- //functions taken from example 1 assignments
-// Determines valid quantity (If "q" is a negative interger)
+//function (isNonNegInt) taken from example 1 assignment
+// Determines valid quantity (If "q" is a negative integer)
 function isNonNegInt(q, return_errors = false) {
     errors = []; // assume no errors at first
     if (q == '') q = 0; // handle blank inputs as if they are 0
@@ -11,8 +11,9 @@ function isNonNegInt(q, return_errors = false) {
     return return_errors ? errors : (errors.length == 0);
 };
 
+
 //Load in query string, product info, and express package
-var qs=require('querystring');
+const qs=require('node:querystring');
 var products = require(__dirname + '/products.json');
 var express = require('express');
 var app = express();
@@ -34,14 +35,15 @@ app.get("/products.js", function(request, response, next)
         });
 
 // process purchase request (validate quantities, check quantity available)
-app.post("/purchase", function(req, res, next){
-    console.log(req.body);
+app.post("/purchase", function(request, response, next){
+    console.log(request.body);
     var q;
     var has_quantities = false;
     var errors = {};
+    //advice for later: serialize error object; find better way to pass errors back and forth for Assignment2
     for (let i in products) {
-        q = req.body['quantity' + i];
-            if (typeof q != 'undefined') {
+        q = request.body['quantity' + i];
+        if (typeof q != 'undefined') {
             console.log(q);
             // this code is to check whether or not any quantities have been selected by the user
             if(q>0) {
@@ -51,29 +53,26 @@ app.post("/purchase", function(req, res, next){
             if(isNonNegInt(q,false) == false) {
                 errors['quantity_error'+i] = isNonNegInt(q,true);
             }
-            if (q[i] > products[i].amt_ava) {
-                errors['available_' + i] = `We don't have ${(quantities[i])} ${products[i].item} ready to ship, order less or check our stock later!`
+            if (q > products[i].amt_ava) {  //if quantity entered is greater than quantity available 
+                errors['stock_outage' + i ] = `We currenly don't have ${(q)} ${products[i].name}s. Please check back later!`
             }
-            }};
-            
-            if(has_quantities == false) {
-                errors['no_selections_error'] = "Please select items!"};
-
-            
-
-
-    // if there are no errors, put quanitites into a query string and send them to the invoice. Otherwise, send back to products display
-    
-    var quantity_qs = qs.stringify(req.body)
-    if (Object.keys(errors).length > 0){
-        console.log(errors)
-        res.redirect("./products_home.html?" + quantity_qs + '&' + qs.stringify({"errors_alerts": JSON.stringify(errors)}));
+        }
     }
-
-    else{
-        res.redirect('./invoice.html?'+quantity_qs);
+    // This code is to print out an error stating that the user needs to select quantites instead of leaving it blank
+    if(has_quantities == false) {
+        errors['no_selections_error'] = "Please select some items to purchase!";
     }
-}); 
+    // This code is for when there are no errors and will move the user on towards the invoice.html file I have instead of directing them back to products display (like when we do have an error)
+    if (Object.keys(errors).length == 0) {
+        //If quantities are valid, remove quantities from the quantity available.
+        for(let i in products){
+            products[i].amt_ava -= Number(request.body['quantity' + i]);
+        }
+        response.redirect("./invoice.html?" + qs.stringify(request.body));
+    } else {
+        response.redirect("./products_home.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
+    }
+});
 
 
 // route all other GET requests to files in public 
