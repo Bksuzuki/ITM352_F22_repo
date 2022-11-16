@@ -1,0 +1,30 @@
+/*styling for products_home.html*/
+/*concepts somehwat referenced from smartphone products 1*/
+
+h1{
+    text-align: center;
+}
+head {
+    text-align: center;
+}
+body {
+    text-align: center;
+    background-color: beige;
+}
+body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
+.w3-bar-block .w3-bar-item {padding: 1px;}
+img {
+    height: 300px;
+    width: 300px;
+}
+main {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+p{
+    width: 300px;
+}
+footer {
+    padding:20px;
+}
