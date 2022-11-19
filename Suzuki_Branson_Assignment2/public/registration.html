@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<script>
+     window.onload = function () {
+        let params = (new URL(document.location)).searchParams;
+            if (params.has('registration_errors')) {
+                Errors = (params.get('registration_errors'));
+                document.write(Errors)
+            }
+    }
+</script>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

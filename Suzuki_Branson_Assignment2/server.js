@@ -1,6 +1,7 @@
 
 // Layout taken from Assignment 1 Workshop Module//
 //function (isNonNegInt) taken from example 1 assignment
+//Modified Blake Saari's Spring 2022 Assignment 2 server.js 
 // Determines valid quantity (If "q" is a negative integer)
 function isNonNegInt(q, return_errors = false) {
     errors = []; // assume no errors at first
@@ -19,7 +20,7 @@ var express = require('express');
 var fs = require('fs')
 var app = express();
 var qty_obj = {};
-var user_info = './user_info.json';
+var user_data = './user_data.json';
 const { response } = require('express');
 const { URLSearchParams } = require('url');
 app.use(express.urlencoded({ extended: true }));
@@ -79,57 +80,37 @@ app.post("/purchase", function(request, response, next){
     }
 });
 
-//---------------------------------------------------
-// ---------------------------- Log-in -------------------------------- // 
+//--------------------------Log-in-------------------------------- // 
 
-if (fs.existsSync(user_info)) {
+if (fs.existsSync(user_data)) {
     // Lab 13 Example
-    var data_str = fs.readFileSync(user_info, 'utf-8');
+    var data_str = fs.readFileSync(user_data, 'utf-8');
     var user_str = JSON.parse(data_str);
 }
 else {
-    console.log(user_info + ' does not exist.');
+    console.log(user_data + ' does not exist.');
 }
 
-// Processing Login Request
-    // Process login form POST and redirect to logged in page if ok, back to login page if not
-    app.post("/process_login", function (request, response) {
-
-        // Start with no errors
-        var errors = {};
-
-        // Pull data from login form
-        var the_email = request.body['email'].toLowerCase();
-        var the_password = request.body['password'];
-
-        // Check if entered password matches stored password (Lab 13)
-        if (typeof user_str[the_email] != 'undefined') {
-            if (user_str[the_email].password == the_password) {
-                // If the passwords match...
-                qty_obj['email'] = the_email;
-                qty_obj['fullname'] = user_str[the_email].name;
-                // Store quantity data     
-                let params = new URLSearchParams(qty_obj);
-                console.log(qty_obj)
-                // If no errors, redirect to invoice page with quantity data
-                response.redirect('./invoice.html?' + params.toString());
-                return;
-            // If password incorrect add to errors variable
+//Login Request
+    // Taken from example assignment2
+    app.post("/login", function (request, response) {
+        let params = new URLSearchParams(request.query);
+        console.log(params);
+        // Process login form POST and redirect to logged in page if ok, back to login page if not
+        the_username = request.body['email'].toLowerCase();
+        the_password = request.body['password'];
+        if (typeof user_str[the_username] != 'undefined') {
+            if (user_str[the_username].password == the_password) {
+                response.redirect('./invoice.html?'+ qs.stringify(params));
             } else {
-                errors['login_error'] = `Incorrect password`;
+                response.send(`Wrong password!`);
             }
-            // If email incorrect add to errors variable                
-            } else {
-                errors['login_error'] = `Wrong E-Mail`;
-            }
-            // If errors exist, redirect to login page with errors in string
-            let params = new URLSearchParams(errors);
-            params.append('email', the_email);
-            response.redirect('./login.html?' + params.toString());
+            return;
         }
-    );
+        response.send(`${the_username} does not exist`);
+    });
 
-// ---------------------------- Registration -------------------------------- // 
+//-------------------------Registration--------------------------- // 
 app.post("/registration", function (request, response) {
     // Start with 0 registration errors
     var registration_errors = {}
@@ -176,8 +157,9 @@ app.post("/registration", function (request, response) {
                 user_str[register_email] = {};
                 user_str[register_email].password = request.body.password;
                 user_str[register_email].email = request.body.email;
+                user_str[register_email].fullname = request.body.fullname;
                 // Write data into user_data.json file via the user_str variable
-                fs.writeFileSync(user_info, JSON.stringify(user_str));
+                fs.writeFileSync(user_data, JSON.stringify(user_str));
                 // Add product quantity data
                 qty_obj['email'] = register_email;
                 qty_obj['fullname'] = user_str[register_email].name;
@@ -249,7 +231,7 @@ if(typeof user_str[current_email] != 'undefined') {
 if (Object.keys(reset_errors).length == 0) {
     user_str[current_email].password = request.body.newpassword
     // Write new password into user_data.json
-    fs.writeFileSync(user_info, JSON.stringify(user_str), "utf-8");
+    fs.writeFileSync(user_data, JSON.stringify(user_str), "utf-8");
     // Pass quantity data
     qty_obj['email'] = current_email;
     qty_obj['fullname'] = user_str[current_email].name;
