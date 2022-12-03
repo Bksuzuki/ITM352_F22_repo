@@ -1,0 +1,16 @@
+/*styling for products_home.html*/
+/*concepts somehwat referenced from smartphone products 1*/
+
+h1, h3{
+    text-align: center;
+}
+head {
+    text-align: center;
+}
+body {
+    text-align: center;
+    background-color: beige;
+}
+body,h1,h5,h2{font-family: "Karma", sans-serif};
+
+

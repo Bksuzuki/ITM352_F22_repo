@@ -16,22 +16,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Countdown: Registration</title>
+    <title>The Countdown: Account Update</title>
     <hr><h2>The Countdown</h2></hr>
-    <h5>Register Here: Please enter required information to get account started!</h5>
+    <h5>Input account updates here.</h5>
 </head>
 <body>
-    <form name='register' action="/registration" method="POST">
+    <form name='register' action="/change_pass" method="POST">
        
             <div><label for="email">Email:</label></div>
             <div><input type="text" name="email" size="50" /></div>
-            <div><label for="fullname">Name:</label></div>
-            <div><input type="text" name="name" size="50" /></div>
+            <div><label for="email">Email:</label></div>
+            <div><input type="text" name="email" size="50" /></div>
             <div><label for="passid">Password:</label></div>
             <div><input type="password" name="password" size="50" /></div>
             <div><label for="passid">Repeat password:</label></div>
             <div><input type="password" name="repeat_password" size="50" /></div>
-            <div><hr><input type="submit" name="submit" value="Register" action="/registration" method="POST"></div></hr></div>
+            <div><hr><input type="submit" name="submit" value="Complete Change" action="/registration" method="POST"></div></hr></div>
   
     </form>
 </body>

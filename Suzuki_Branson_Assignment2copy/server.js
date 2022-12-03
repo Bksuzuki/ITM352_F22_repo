@@ -1,7 +1,7 @@
 
 // Layout taken from Assignment 1 Workshop Module//
 //function (isNonNegInt) taken from example 1 assignment
-// Copied and Modified Blake Saari's Spring 2022 Assignment 2 server.js 
+//Modified Blake Saari's Spring 2022 Assignment 2 server.js 
 // Determines valid quantity (If "q" is a negative integer)
 function isNonNegInt(q, return_errors = false) {
     errors = []; // assume no errors at first
@@ -19,13 +19,13 @@ var products = require(__dirname + '/products.json');
 var express = require('express');
 var fs = require('fs')
 var app = express();
-//variable to store product data 
-var obj_num = {};
+var qty_obj = {};
 var user_data = './user_data.json';
 const { response } = require('express');
+const { concatSeries } = require('async');
+var express = require('express');
+var app = express();
 app.use(express.urlencoded({ extended: true }));
-//create a constant to refer to 
-
 
 // monitor all requests  
 app.all('*', function (request, response, next) {
@@ -70,73 +70,60 @@ app.post("/purchase", function(request, response, next){
     if(has_quantities == false) {
         errors['no_selections_error'] = "Please select some items to purchase!";
     }
-    let quantity_object = qs.stringify(request.body);
     // This code is for when there are no errors and will move the user on towards the invoice.html file I have instead of directing them back to products display (like when we do have an error)
-    
     if (Object.keys(errors).length == 0) {
         //If quantities are valid, remove quantities from the quantity available.
         for(let i in products){
             products[i].amt_ava -= Number(request.body['quantity' + i]);
         }
-        //store quantities in obj_num
-        obj_num = quantity_object;
-        response.redirect("./login.html?");
-        
+        response.redirect("./login.html?" + qs.stringify(request.body));
     } else {
-        response.redirect("./index.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
+        response.redirect("./products_home.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
     }
 });
 
-//--------------------------Log-in-------------------------------- //
+//--------------------------Log-in-------------------------------- // 
 
 if (fs.existsSync(user_data)) {
     // Lab 13 Example
     var data_str = fs.readFileSync(user_data, 'utf-8');
     var user_str = JSON.parse(data_str);
-};
+}
+else {
+    console.log(user_data + ' does not exist.');
+}
+
 //Login Request
     // Taken from example assignment2
     app.post("/login", function (request, response) {
-
+        let params = new URLSearchParams(request.query);
+        console.log(params);
         // Process login form POST and redirect to logged in page if ok, back to login page if not
-        var the_username = request.body['email'].toLowerCase();
-        var the_password = request.body['password'];
+        the_username = request.body['email'].toLowerCase();
+        the_password = request.body['password'];
         if (typeof user_str[the_username] != 'undefined') {
             if (user_str[the_username].password == the_password) {
-                //begins counter for user in terms of how many times they logged in
-                user_str[the_username].count = user_str[the_username].count+1;
-                //creates variables to pass into query string for the invoice to display personalized information
-                var time_stamp = user_str[the_username].time;
-                var user_count = user_str[the_username].count
-                var custom_name = user_str[the_username].name;
-                fs.writeFileSync(user_data, JSON.stringify(user_str));
-        // Redirect with obj_num, which stores the request body of the products page and also the custome name, timestamp, and user count for the specific user
-                response.redirect('./invoice.html?'+ '&' + obj_num + '&' + 'name='+ custom_name + '&' + 'time=' + time_stamp + '&' + 'count='+user_count);
-                //changes the timestamp on the users information in order to update when they logged in last but only after the previous time is displayed on invoice
-                var current = Date()
-                user_str[the_username].time = current;
+                response.redirect('./invoice.html?'+ params.toString());
             } else {
-                response.redirect(`./login.html?wrongpassword`);
+                response.send(`Wrong password!`);
             }
             return;
         }
-        response.redirect(`./login.html?nousername`);
+        response.send(`${the_username} does not exist`);
     });
 
-//-------------------------Registration--------------------------- //
-// Data validation taken and modified from Blake Saari's Spring 2022 assignment 2
+//-------------------------Registration--------------------------- // 
 app.post("/registration", function (request, response) {
     // Start with 0 registration errors
     var registration_errors = {}
-    var current = Date()
-    // Import email and full name from submitted page
+    // Import email from submitted page
     var register_email = request.body['email'].toLowerCase();
     // Validate email address (From w3resource - Email Validation)
     if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(request.body.email) == false) {
         registration_errors['email'] = `Please enter a valid email address`;
     }
     // Validates that there is an email inputted
-    if (register_email.length == 0) {
+    else if (register_email.length == 0) {
         registration_errors['email'] = `Please enter a valid email address`;
     }
     // Validates that the email inputted has not already been registered
@@ -148,32 +135,39 @@ app.post("/registration", function (request, response) {
         registration_errors['password'] = `Password must be at least 8 characters`;
     } 
     // Validates that there is a password inputted
-    if (request.body.password.length == 0) {
+    else if (request.body.password.length == 0) {
         registration_errors['password'] = `Please enter a password`
     }
     // Validates that the passwords match
     if (request.body['password'] != request.body['repeat_password']) {
         registration_errors['repeat_password'] = `Your passwords do not match, please try again`;
     }
-    if (request.body.name.length == 0) {
-        registration_errors['name'] = `Please enter your name`
+    // Validates that the full name inputted consists of A-Z characters exclusively
+    if (/^[A-Za-z, ]+$/.test(request.body['fullname'])) {
     }
+    else {
+        registration_errors['fullname'] = `Please enter your first and last name`;
+    // Assures that the name inputted will not be longer than 30 characters
+    }
+    if (request.body['fullname'].length > 30) {
+        registration_errors['fullname'] = `Please enter a name less than 30 characters`;
+    }
+
         // Assignment 2 Example Code -- Reading and writing user info to a JSON file
             // If there are no errors...
             if(Object.keys(registration_errors).length == 0) {
                 user_str[register_email] = {};
                 user_str[register_email].password = request.body.password;
-                user_str[register_email].email = request.body.email.toLowerCase();
-                user_str[register_email].name = request.body.name;
-                user_str[register_email].count = 1;
-                user_str[register_email].time = current;
+                user_str[register_email].email = request.body.email;
+                user_str[register_email].fullname = request.body.fullname;
                 // Write data into user_data.json file via the user_str variable
                 fs.writeFileSync(user_data, JSON.stringify(user_str));
-                var time_stamp = user_str[register_email].time;
-                var user_count = user_str[register_email].count
-                var custom_name = user_str[register_email].name;
-                // If registered send to invoice with product quantity data, name, and querystring for first purchase
-                response.redirect('./invoice.html?' + obj_num+ '&' + 'name='+ custom_name + '&' + 'first');
+                // Add product quantity data
+                qty_obj['email'] = register_email;
+                qty_obj['fullname'] = user_str[register_email].name;
+                let params = new URLSearchParams(qty_obj)
+                // If registered send to invoice with product quantity data
+                response.redirect('./invoice.html?' + params.toString());
             } else {
                 // If errors exist, redirect to registration page with errors
                 request.body['registration_errors'] = JSON.stringify(registration_errors);
@@ -184,7 +178,7 @@ app.post("/registration", function (request, response) {
 
 // ---------------------------- Change Registration Details -------------------------------- // 
 
-app.post("/change_pass", function (request, response) {
+app.post("/change_password", function (request, response) {
 // Start with no errors
 var reset_errors = {};
 
@@ -241,9 +235,9 @@ if (Object.keys(reset_errors).length == 0) {
     // Write new password into user_data.json
     fs.writeFileSync(user_data, JSON.stringify(user_str), "utf-8");
     // Pass quantity data
-    obj_num['email'] = current_email;
-    obj_num['fullname'] = user_str[current_email].name;
-    let params = new URLSearchParams(obj_num);
+    qty_obj['email'] = current_email;
+    qty_obj['fullname'] = user_str[current_email].name;
+    let params = new URLSearchParams(qty_obj);
     // Redirect to login page with quantity data in string
     response.redirect('./login.html?' + params.toString());
     return;

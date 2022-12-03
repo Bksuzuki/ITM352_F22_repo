@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--loading in product information for use-->
+<script src="./products.js" type="text/javascript"></script>
+<script>
+//Help form Daniel Port on alert message section
+const params = (new URL(document.location)).searchParams;
+
+
+//creating function for use in window onload
+function alertmessage (){
+    var submit_button_msg = "";
+   for (let i in products) {
+    //if I have the quantity data then put back into textboxes
+    if (params.has('quantity'+i)) {
+        products_quantity_form['quantity'+i].value = params.get('quantity'+i);
+        //Checking if quantity error exists and if so then displaying under text box in red
+        if (params.has('quantity_error'+i)) {
+            purchase_button.value = "Select valid quantities!";
+            purchase_button.style.color = "red";
+            document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('quantity_error'+i)}</font>`;
+        }   
+        //Checking if stock error exists and if so then displaying under text box in red
+        else if (params.has('stock_outage' + i)) {
+            purchase_button.value = "Please only select quantities that are in stock!";
+            purchase_button.style.color = "red";
+            document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('stock_outage' + i)}</font>`;
+        }
+        
+    }
+}
+   }
+//If there are no inputs in textboxes, display the no selections error in the button. In addition, other errors will display in the button using the submit_button_msg error.
+   if (params.has('no_selections_error')) {
+    submit_button_msg = params.get('no_selections_error');
+   }
+   
+    
+//On window load, carry out the alertmessage function. Doing this on window onload so textboaxes are loaded in already and have space for errors. 
+ window.onload = alertmessage; 
+
+    
+</script>
+<head>
+  <title>The Countdown</title>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--Template taken from w3 Schools-->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+  <link rel="stylesheet" href="./css/products_home_style.css">
+</head>
+<body>
+
+<!-- Title -->
+  <div class="text-center">
+    <h1>THE COUNTDOWN</h1>
+    <h6>We carry premium watches of all different prices and styles to accomodate your needs!</h6>
+  </div>
+
+
+<!-- Start of form for server post -->
+<form name="products_quantity_form" action="./purchase" method="POST">
+
+<!-- Product Information -->
+<main>
+<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin: top 10px">
+<div class="w3-row-padding w3-padding-16 w3-center" id="watches">
+<div class = "items"><main>
+    <script>
+        // Print items on pavge
+        // Taken from SmartPhoneProducts3 and edited to include other attributes
+        // Added ID of quantity errors
+        for(i = 0; i < products.length; i++) {
+            document.write(`
+      <section class="item">
+                <h2>${products[i].name}</h2>
+                <img src="${products[i].image}">
+                <p>${products[i].description}</p>
+                <p>Price: $${products[i].price}</p>
+                <label id="quantity${i}_label"}">Quantity</label>
+                <input type="text" placeholder="0" name="quantity${i}">
+                <p>Stock Available: ${products[i].amt_ava}</p>
+                <p id="quantity_errors${i}"></p>
+      </section>
+            `);
+        }
+        console.log(params)
+    </script>
+    </main>
+        </div>
+    </div>
+    </div>
+    </main>
+<footer class="container-fluid text-center">
+    <!--button to submit HTML form-->
+    <div id="purchase_error_div"></div>
+    <input id="purchase_button" type="submit" class="button" value="Purchase" name="purchase_submit" onclick="">
+    <script> 
+    purchase_button.value = submit_button_msg;
+    purchase_button.style.color = "red";
+    </script>
+</footer>
+</form>
+</body>
+</html>
