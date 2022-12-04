@@ -6,9 +6,17 @@
 <script>
      window.onload = function () {
         let params = (new URL(document.location)).searchParams;
-            if (params.has('registration_errors')) {
-                Errors = (params.get('registration_errors'));
-                alert(Errors)
+            if (params.has('success')){ 
+                document.getElementById(`success`).innerHTML= `<font style="color:black">Your password was successfully changed! Click below to return to store! <p><a href="index.html" class="text-white-50
+       fw-bold">Log Out and Go Back To Home Page</a></p></font>`;}
+            if (params.has('no_match')) {
+                document.getElementById(`no_match`).innerHTML= `<font style="color:red">The new passwords you entered do not match!</font>`;
+            }
+            if (params.has('short_pass')) {
+                document.getElementById(`short_pass`).innerHTML= `<font style="color:red">Please make your new password 10 characters or more!</font>`;
+            }
+            if (params.has('diff_pass')) {
+                document.getElementById(`diff_pass`).innerHTML= `<font style="color:red">Your new password must be different than your old password!</font>`;
             }
     }
 </script>
@@ -22,17 +30,15 @@
 </head>
 <body>
     <form name='register' action="/change_pass" method="POST">
-       
-            <div><label for="email">Email:</label></div>
-            <div><input type="text" name="email" size="50" /></div>
-            <div><label for="email">Email:</label></div>
-            <div><input type="text" name="email" size="50" /></div>
-            <div><label for="passid">Password:</label></div>
-            <div><input type="password" name="password" size="50" /></div>
-            <div><label for="passid">Repeat password:</label></div>
-            <div><input type="password" name="repeat_password" size="50" /></div>
+            <div><label for="passid">New Password:</label></div>
+            <div><input type="password" name="newpassword" size="50" /></div>
+            <div><label for="passid">Repeat New Password:</label></div>
+            <div><input type="password" name="repeatpassword" size="50" /></div>
             <div><hr><input type="submit" name="submit" value="Complete Change" action="/registration" method="POST"></div></hr></div>
-  
     </form>
+    <p id="success"></p>
+    <p id="no_match"></p>
+    <p id="short_pass"></p>
+    <p id="diff_pass"></p>
 </body>
 </html>

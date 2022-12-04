@@ -23,6 +23,7 @@ var app = express();
 var obj_num = {};
 var user_data = './user_data.json';
 const { response } = require('express');
+var logged_in = {};
 app.use(express.urlencoded({ extended: true }));
 //create a constant to refer to 
 
@@ -95,22 +96,23 @@ if (fs.existsSync(user_data)) {
     var user_str = JSON.parse(data_str);
 };
 //Login Request
-    // Taken from example assignment2
     app.post("/login", function (request, response) {
 
         // Process login form POST and redirect to logged in page if ok, back to login page if not
         var the_username = request.body['email'].toLowerCase();
+        //save username in the event of password change
+        logged_in = the_username;
         var the_password = request.body['password'];
         if (typeof user_str[the_username] != 'undefined') {
             if (user_str[the_username].password == the_password) {
-                //begins counter for user in terms of how many times they logged in
+                //IR4: begins counter for user in terms of how many times they logged in
                 user_str[the_username].count = user_str[the_username].count+1;
                 //creates variables to pass into query string for the invoice to display personalized information
                 var time_stamp = user_str[the_username].time;
                 var user_count = user_str[the_username].count
                 var custom_name = user_str[the_username].name;
                 fs.writeFileSync(user_data, JSON.stringify(user_str));
-        // Redirect with obj_num, which stores the request body of the products page and also the custome name, timestamp, and user count for the specific user
+                 // Redirect with obj_num, which stores the request body of the products page and also the custome name, timestamp, and user count for the specific user
                 response.redirect('./invoice.html?'+ '&' + obj_num + '&' + 'name='+ custom_name + '&' + 'time=' + time_stamp + '&' + 'count='+user_count);
                 //changes the timestamp on the users information in order to update when they logged in last but only after the previous time is displayed on invoice
                 var current = Date()
@@ -131,32 +133,33 @@ app.post("/registration", function (request, response) {
     var current = Date()
     // Import email and full name from submitted page
     var register_email = request.body['email'].toLowerCase();
-    // Validate email address (From w3resource - Email Validation)
-    if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(request.body.email) == false) {
-        registration_errors['email'] = `Please enter a valid email address`;
+    // Validate email address (From Lydia Jun's Fall 2021 Assignment 2)
+    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(request.body.email)) { //check if the fullname is correct
+    } else {
+        registration_errors['valid_email'] = `Please enter a valid email address`;
     }
     // Validates that there is an email inputted
     if (register_email.length == 0) {
-        registration_errors['email'] = `Please enter a valid email address`;
+        registration_errors['no_email'] = `Please input an email address`;
     }
     // Validates that the email inputted has not already been registered
     if (typeof user_str[register_email] != 'undefined') {
-        registration_errors['email'] = `This email address has already been registered`
+        registration_errors['existing_email'] = `This email address has already been registered`
     }
     // Validates that password is at least 8 characters
-    if (request.body.password.length < 8) {
-        registration_errors['password'] = `Password must be at least 8 characters`;
+    if (request.body.password.length < 10) {
+        registration_errors['short_password'] = `Password must be at least 10 characters`;
     } 
     // Validates that there is a password inputted
     if (request.body.password.length == 0) {
-        registration_errors['password'] = `Please enter a password`
+        registration_errors['no_password'] = `Please enter a password`
     }
     // Validates that the passwords match
-    if (request.body['password'] != request.body['repeat_password']) {
-        registration_errors['repeat_password'] = `Your passwords do not match, please try again`;
+    if (request.body.password != request.body.repeat_password) {
+        registration_errors['no_match'] = `Your passwords do not match, please try again`;
     }
     if (request.body.name.length == 0) {
-        registration_errors['name'] = `Please enter your name`
+        registration_errors['no_name'] = `Please enter your name`
     }
         // Assignment 2 Example Code -- Reading and writing user info to a JSON file
             // If there are no errors...
@@ -172,88 +175,54 @@ app.post("/registration", function (request, response) {
                 var time_stamp = user_str[register_email].time;
                 var user_count = user_str[register_email].count
                 var custom_name = user_str[register_email].name;
+                //save username in the event of password change
+                logged_in = register_email;
                 // If registered send to invoice with product quantity data, name, and querystring for first purchase
                 response.redirect('./invoice.html?' + obj_num+ '&' + 'name='+ custom_name + '&' + 'first');
             } else {
                 // If errors exist, redirect to registration page with errors
-                request.body['registration_errors'] = JSON.stringify(registration_errors);
                 let params = new URLSearchParams(request.body);
-                response.redirect("./registration.html?" + params.toString());
+                response.redirect("./registration.html?" + qs.stringify(registration_errors)+ '&'+ params.toString());
             }
 });
+app.post("/update", function(request, response){
 
+    response.redirect('./update.html?'+'user='+logged_in);
+})
 // ---------------------------- Change Registration Details -------------------------------- // 
-
+//Validation taken and modified from Blake Saari's Spring 2022 Assignment 2
 app.post("/change_pass", function (request, response) {
 // Start with no errors
 var reset_errors = {};
-
-// Pulls data inputed into the form from the body
-let current_email = request.body['email'].toLowerCase();
-let current_password = request.body['password'];
-
-// Validates that email is correct format
-if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(request.body.email) == false) {
-    reset_errors['email'] = `Please enter a valid email address (Ex: johndoe@meatlocker.com)`
-}
-// Validates that an email was inputted
-else if (current_email.length == 0) {
-    reset_errors['email'] = `Please enter an email address`
-}
-// Validates that both new passwords are identical
-if(request.body['newpassword'] != request.body['repeatnewpassword']) {
-    reset_errors['repeatnewpassword'] = `The passwords you entered do not match`;
-}
-
-// Validates that inputted email and password match credentials stored in user_data.json
-if(typeof user_str[current_email] != 'undefined') {
-    // Validates that password submited matches password saved in user_data.json
-    if(user_str[current_email].password == current_password) {
-        // Validates that password is at least 8 characters long
-        if(request.body.newpassword.length < 8) {
-            reset_errors['newpassword'] = `Password must be at least 8 characters`
-        }
-        // Validates that passwords matches user_data.json
-        if(user_str[current_email].password != current_password) {
-            reset_errors['password'] = `The password entered is incorrect`
-        }
-        // Validates that inputted new passwords are identical
-        if(request.body.newpassword != request.body.repeatnewpassword) {
-            reset_errors['repeatnewpassword'] = `The passwords you entered do not match`
-        }
-        // Validates that new password is different than current password
-        if(request.body.newpassword && request.body.repeatnewpassword == current_password) {
-            reset_errors['newpassword'] = `Your new password must be different from your old password`
-        }
-            }
-            else {
-                // Error message if password is incorrect
-                reset_errors['password'] = `You entered an incorrect password`;
-            }
-            }
-            else {
-                // Error message is email is incorrect
-                reset_errors['email'] = `The email entered has not been registered yet`
-            }
-// If there are no errors... (Momoka Michimoto)
+//use stored username to access information since 
+var curr_password = user_str[logged_in].password
+    // Validates that both new passwords are identical
+    if(request.body['newpassword'] != request.body['repeatpassword']) {
+    reset_errors['no_match'] = `The passwords you entered do not match`
+    }
+    // Validates that password is at least 10 characters long
+    if(request.body.newpassword.length < 10) {
+    reset_errors['short_pass'] = `Password must be at least 10 characters`
+    }
+    // Validates that new password is different than current password
+    if(request.body.newpassword == curr_password) {
+    reset_errors['diff_pass'] = `Your new password must be different from your old password`
+    }
+// When there are no errors then change user information
 if (Object.keys(reset_errors).length == 0) {
-    user_str[current_email].password = request.body.newpassword
+    user_str[logged_in].password = request.body.newpassword;
+    console.log(request.body.newpassword)
     // Write new password into user_data.json
     fs.writeFileSync(user_data, JSON.stringify(user_str), "utf-8");
-    // Pass quantity data
-    obj_num['email'] = current_email;
-    obj_num['fullname'] = user_str[current_email].name;
-    let params = new URLSearchParams(obj_num);
-    // Redirect to login page with quantity data in string
-    response.redirect('./login.html?' + params.toString());
+   //take back to update registration page with success message
+    response.redirect('./update.html?'+'success');
     return;
 }
 else {
     // Request errors
-    request.body['reset_errors'] = JSON.stringify(reset_errors);
     let params = new URLSearchParams(request.body);
     // Redirect back to update registration page with errors in string
-    response.redirect('update_registration.html?' + params.toString());
+    response.redirect('update.html?' + qs.stringify(reset_errors));
 }
 
 })

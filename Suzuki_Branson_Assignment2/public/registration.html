@@ -3,16 +3,38 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
 <link rel="stylesheet" href="./css/registration.css">
-<script>
-     window.onload = function () {
-        let params = (new URL(document.location)).searchParams;
-            if (params.has('registration_errors')) {
-                Errors = (params.get('registration_errors'));
-                alert(Errors)
-            }
-    }
-</script>
+
 <head>
+    <script>
+        window.onload = function () {
+            let params = (new URL(document.location)).searchParams;
+            //Display errors under textboxes if they show up in the params. Sort of inefficient but hard to append to the innerHTML of a single id.
+                if (params.has('valid_email')) {
+                document.getElementById(`email`).innerHTML= `<font style="color:red">Please put in a valid email address!</font>`;}
+                if (params.has('no_email')) {
+                document.getElementById(`email`).innerHTML= `<font style="color:red">Please enter an email address!</font>`;}
+                if (params.has('existing_email')) {
+                document.getElementById(`email`).innerHTML= `<font style="color:red">This email is already in use for an account!</font>`;}
+                if (params.has('short_password')) {
+                document.getElementById(`password`).innerHTML= `<font style="color:red">Please use a password 10 characters or longer!</font>`;}
+                if (params.has('no_password')) {
+                document.getElementById(`password`).innerHTML= `<font style="color:red">Please enter a password!</font>`;}
+                if (params.has('no_match')) {
+                document.getElementById(`password_match`).innerHTML= `<font style="color:red">Your passwords do not match!</font>`;}
+                if (params.has('no_name')) {
+                document.getElementById(`name`).innerHTML= `<font style="color:red">Please enter your name!</font>`;}
+                //make textboxxes sticky
+                if (params.has('name')) {
+                registration_form['name'].value = params.get('name')};
+                if (params.has('email')) {
+                registration_form['email'].value = params.get('email')};
+                if (params.has('password')) {
+                registration_form['password'].value = params.get('password')};
+                if (params.has('repeat_password')) {
+                registration_form['repeat_password'].value = params.get('repeat_password')};
+
+       };
+   </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,16 +43,20 @@
     <h5>Register Here: Please enter required information to get account started!</h5>
 </head>
 <body>
-    <form name='register' action="/registration" method="POST">
+    <form name='registration_form' action="/registration" method="POST">
        
             <div><label for="email">Email:</label></div>
-            <div><input type="text" name="email" size="50" /></div>
+            <div><input type="email" name="email" size="50" /></div>
             <div><label for="fullname">Name:</label></div>
             <div><input type="text" name="name" size="50" /></div>
             <div><label for="passid">Password:</label></div>
             <div><input type="password" name="password" size="50" /></div>
             <div><label for="passid">Repeat password:</label></div>
             <div><input type="password" name="repeat_password" size="50" /></div>
+            <p id="email"></p>
+            <p id="password"></p>
+            <p id="password_match"></p>
+            <p id="name"></p>
             <div><hr><input type="submit" name="submit" value="Register" action="/registration" method="POST"></div></hr></div>
   
     </form>
