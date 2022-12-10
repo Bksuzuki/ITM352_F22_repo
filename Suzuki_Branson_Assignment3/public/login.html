@@ -1,0 +1,40 @@
+<!--Made By Branson Suzuki-->
+<!--Login page for the countdown-->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+<link rel="stylesheet" href="./css/login.css">
+<script>
+    window.onload = function () {
+        let params = (new URL(document.location)).searchParams;
+            if (params.has('wrongpassword')) {
+                alert("Wrong password! Please try again!")
+            }
+            if (params.has('nousername')) {
+                alert("Username does not exist!")
+            }
+    };
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+
+  <body>
+  
+    <form name = "login" action = "/login" method="POST">
+        <div class = "container">
+            <h1>Login Page</h1>
+            <p>Please login to complete your purchase.</p>
+            <hr>
+            <label for ="email">Email</label>
+            <input type="text" placeholder="Enter email" name ="email" id ="email" required>
+            <label for ="password">Password</label>
+            <input type="password" placeholder="Enter password" name ="password" id ="password" required>
+            <hr>
+            <button type="submit" value="login" name="login">Log-in</button>
+        </div>
+    </form>
+    <p>Need to create a new account? <a href="registration.html" class="text-white-50 fw-bold">Click Here</a>
+</body>
+</html>

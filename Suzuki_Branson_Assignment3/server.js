@@ -13,26 +13,30 @@ function isNonNegInt(q, return_errors = false) {
 };
 
 
-//Load in query string, product info, and express package, cookie parser and session middleware, and user information
+//Load in query string, product info, and express package, session middleware, and user information
 const qs=require('node:querystring');
+var fs = require('fs')
 var products = require(__dirname + '/products.json');
 var express = require('express');
-var fs = require('fs')
 var app = express();
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 //variable to store product data 
 var obj_num = {};
 var user_data = './user_data.json';
 const { response } = require('express');
 var logged_in = {};
 app.use(express.urlencoded({ extended: true }));
-//create a constant to refer to 
+
+// get session
+var session = require('express-session');
+app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
+
 
 
 // monitor all requests  
 app.all('*', function (request, response, next) {
-   console.log(request.method + ' to ' + request.path);
+   console.log(request.method + ' to ' + request.path)
+   if(typeof request.session.cart == 'undefined') { request.session.cart = {}; } 
+
    next();
 });
 
