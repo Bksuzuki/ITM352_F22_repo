@@ -13,31 +13,35 @@ function isNonNegInt(q, return_errors = false) {
 };
 
 
-//Load in query string, product info, and express package, session middleware, and user information
+//Load in query string, product info, and express package, cookie parser and session middleware, and user information
 const qs=require('node:querystring');
-var fs = require('fs')
 var products = require(__dirname + '/products.json');
+var fs = require('fs')
+
 var express = require('express');
 var app = express();
+
+var session = require('express-session');
+var products_data = require(__dirname + '/products.json');
+
+app.use(express.urlencoded({ extended: true }));
+app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
+
 //variable to store product data 
 var obj_num = {};
 var user_data = './user_data.json';
 const { response } = require('express');
 var logged_in = {};
-app.use(express.urlencoded({ extended: true }));
-
-// get session
-var session = require('express-session');
-app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
-
-
 
 // monitor all requests  
 app.all('*', function (request, response, next) {
-   console.log(request.method + ' to ' + request.path)
-   if(typeof request.session.cart == 'undefined') { request.session.cart = {}; } 
-
+   console.log(request.method + ' to ' + request.path);
    next();
+});
+
+//get product data for pages
+app.post("/get_products_data", function (request, response) {
+    response.json(products_data);
 });
 
 // Routing 
@@ -47,6 +51,18 @@ app.get("/products.js", function(request, response, next)
             var products_str = `var products = ${JSON.stringify(products)};`;
             response.send(products_str);
         });
+app.post("/update_cart", function (request, response) {
+            console.log(request.session);
+            var prod_key = request.body.products_key;
+            if(typeof request.session.cart == 'undefined'){
+                request.session.cart = {};}
+            request.session.cart[prod_key] = request.body.quantity;
+            response.redirect(`./products.html?products_key=${prod_key}`);
+            console.log(request.session);
+           });
+           
+app.post("/get_cart", function (request, response) {
+            response.json(request.session.cart)});
 
 // process purchase request (validate quantities, check quantity available)
 app.post("/purchase", function(request, response, next){
@@ -72,7 +88,8 @@ app.post("/purchase", function(request, response, next){
                 errors['stock_outage' + i ] = `We currently don't have ${(q)} ${products[i].name}s. Please check back later!`
             }
         }
-    }
+    };
+   
     // This code is to print out an error stating that the user needs to select quantites instead of leaving it blank
     if(has_quantities == false) {
         errors['no_selections_error'] = "Please select some items to purchase!";
@@ -91,8 +108,7 @@ app.post("/purchase", function(request, response, next){
         
     } else {
         response.redirect("./index.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
-    }
-});
+    }});
 
 //--------------------------Log-in-------------------------------- //
 

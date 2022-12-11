@@ -32,23 +32,3 @@ footer {
 h5 {
     text-align: center;
 }
-nav {
-    background-color: #333;
-  }
-  
-  nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  
-  nav li {
-    display: inline-block;
-  }
-  
-  nav a {
-    display: block;
-    padding: 10px 20px;
-    color: #fff;
-    text-decoration: none;
-  }

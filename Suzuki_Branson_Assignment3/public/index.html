@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="./functions.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
      <link rel="stylesheet" href="./css/index.css">
+     <script>
+        var products_data;
+        loadJSON('get_products_data', function(response) {
+             // Parsing JSON string into object
+             products_data = JSON.parse(response);
+        });
+        var this_product_key = ''
+        </script>
     <title>The Countdown: Home Page</title>
     
 </head>
 <body>
+    <script> nav_bar(this_product_key, products_data);</script>
     <h1>THE COUNTDOWN</h1>
     <h6>Click Below to Enter The Countdown Product Catalog!</h6>
-    <a href="products_display.html" class="text-white-50 fw-bold"><p><h6>Store</h6></p></a>
+    <a href="products.html" class="text-white-50 fw-bold"><p><h6>Store</h6></p></a>
 </body>
 </html>

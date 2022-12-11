@@ -2,11 +2,19 @@
 <html lang="en">
 <!--loading in product information for use-->
 <script src="./products.js" type="text/javascript"></script>
+<script src="./functions.js"></script>
 <script>
+     
+        
 //Help form Daniel Port on alert message section
 const params = (new URL(document.location)).searchParams;
 
-
+if (params.has('products_key')) {
+            var products_key = params.get('products_key');
+        } else {
+            document.write('no products key in query string');
+            document.stop;
+        }
 //creating function for use in window onload
 function alertmessage (){
     var submit_button_msg = "";
@@ -25,11 +33,7 @@ function alertmessage (){
             purchase_button.value = "Please only select quantities that are in stock!";
             purchase_button.style.color = "red";
             document.getElementById(`quantity_errors${i}`).innerHTML = `<font style="color:red">${params.get('stock_outage' + i)}</font>`;
-        }
-        
-    }
-}
-   }
+        }}}}
 //If there are no inputs in textboxes, display the no selections error in the button. In addition, other errors will display in the button using the submit_button_msg error.
    if (params.has('no_selections_error')) {
     submit_button_msg = params.get('no_selections_error');
@@ -39,8 +43,18 @@ function alertmessage (){
 //On window load, carry out the alertmessage function. Doing this on window onload so textboaxes are loaded in already and have space for errors. 
  window.onload = alertmessage; 
 
-    
+var products_data;
+        loadJSON('get_products_data', function(response) {
+             // Parsing JSON string into object
+             products_data = JSON.parse(response);
+        });
+var cart;
+       loadJSON('get_cart', function(response) {
+             //Parsing JSON string into object
+             cart = JSON.parse(response);
+        });
 </script>
+
 <head>
   <title>The Countdown</title>
   
@@ -50,12 +64,15 @@ function alertmessage (){
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
   <link rel="stylesheet" href="./css/products_home_style.css">
-  <style>
-   
-</style>
 </head>
 <body>
-
+    <nav class="navbar navbar-inverse">
+              <script>
+                nav_bar(products_key, products);</script>
+              </script>
+          </div>
+        </div>
+      </nav>
 <!-- Title -->
   <div class="text-center">
     <h1>THE COUNTDOWN</h1>
@@ -64,42 +81,53 @@ function alertmessage (){
 
 
 <!-- Start of form for server post -->
-<form name="products_quantity_form" action="./purchase" method="POST">
-
+<form action="./update_cart" method="POST">
 <!-- Product Information -->
+
 <main>
 <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin: top 10px">
 <div class="w3-row-padding w3-padding-16 w3-center" id="watches">
 <div class = "items"><main>
     <script>
+        var order_str = '';
+        products = products_data[products_key];
         // Print items on pavge
         // Taken from SmartPhoneProducts3 and edited to include other attributes
         // Added ID of quantity errors
+        order_str+=`<input type="hidden" name="products_key" value="${products_key}">`
+        
+       
+    
         for(i = 0; i < products.length; i++) {
-            document.write(`
+            qty = 0;
+            if (typeof  cart[products_key] != 'undefined'){
+        qty = cart[products_key][i]};
+            order_str+=`
       <section class="item">
-                <h2>${products[i].name}</h2>
-                <img src="${products[i].image}">
-                <p>${products[i].description}</p>
-                <p>Price: $${products[i].price}</p>
+                <h2>${products[i]['name']}</h2>
+                <img src="${products[i]['image']}">
+                <p>${products[i]['description']}</p>
+                <p>Price: $${products[i]['price']}</p>
                 <label id="quantity${i}_label"}">Quantity</label>
-                <input type="text" placeholder="0" name="quantity${i}">
+                <input type="text" placeholder="0" name="quantity[${i}]" value="${qty}">
                 <p>Stock Available: ${products[i].amt_ava}</p>
                 <p id="quantity_errors${i}"></p>
       </section>
-            `);
-        }
-        console.log(params)
+            `;
+        };
+     
+        console.log(params);
+        document.write(order_str);
     </script>
     </main>
-        </div>
+    </div>
     </div>
     </div>
     </main>
 <footer class="container-fluid text-center">
     <!--button to submit HTML form-->
     <div id="purchase_error_div"></div>
-    <input id="purchase_button" type="submit" class="button" value="Purchase" name="purchase_submit" onclick="">
+    <input id="purchase_button" type="submit" class="button" value="Add to Cart" name="add_to_cart" onclick="">
     <script> 
     purchase_button.value = submit_button_msg;
     purchase_button.style.color = "red";
