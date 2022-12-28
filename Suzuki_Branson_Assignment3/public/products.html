@@ -46,12 +46,12 @@ function alertmessage (){
 var products_data;
         loadJSON('get_products_data', function(response) {
              // Parsing JSON string into object
-             products_data = JSON.parse(response);
+            products_data = JSON.parse(response);
         });
 var cart;
-       loadJSON('get_cart', function(response) {
-             //Parsing JSON string into object
-             cart = JSON.parse(response);
+      loadJSON('get_cart', function(response) {
+            //Parsing JSON string into object
+           cart = JSON.parse(response);
         });
 </script>
 
@@ -99,9 +99,9 @@ var cart;
        
     
         for(i = 0; i < products.length; i++) {
-            qty = 0;
-            if (typeof  cart[products_key] != 'undefined'){
-        qty = cart[products_key][i]};
+           qty = 0;
+            if (typeof cart[products_key] != 'undefined'){
+            qty = cart[products_key][i]};
             order_str+=`
       <section class="item">
                 <h2>${products[i]['name']}</h2>
@@ -127,12 +127,8 @@ var cart;
 <footer class="container-fluid text-center">
     <!--button to submit HTML form-->
     <div id="purchase_error_div"></div>
-    <input id="purchase_button" type="submit" class="button" value="Add to Cart" name="add_to_cart" onclick="">
-    <script> 
-    purchase_button.value = submit_button_msg;
-    purchase_button.style.color = "red";
-    </script>
+    <input id="update_cart_button" type="submit" class="button" value="Update Cart" name="add_to_cart" onclick=""></form>
+    <hr><a href="cart.html"><button>See Your cart</button></a></hr>
 </footer>
-</form>
 </body>
 </html>

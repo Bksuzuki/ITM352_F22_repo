@@ -1,3 +1,4 @@
+//taken from example assignment 3
 // This function asks the server for a "service" and converts the response to text. 
 function loadJSON(service, callback) {   
     var xobj = new XMLHttpRequest();

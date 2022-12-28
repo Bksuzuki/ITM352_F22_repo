@@ -1,4 +1,5 @@
 
+// Made by Branson Suzuki Fall 2022
 // Layout taken from Assignment 1 Workshop Module//
 //function (isNonNegInt) taken from example 1 assignment
 // Copied and Modified Blake Saari's Spring 2022 Assignment 2 server.js 
@@ -51,6 +52,7 @@ app.get("/products.js", function(request, response, next)
             var products_str = `var products = ${JSON.stringify(products)};`;
             response.send(products_str);
         });
+        //update the cart object & arrays
 app.post("/update_cart", function (request, response) {
             console.log(request.session);
             var prod_key = request.body.products_key;
@@ -60,10 +62,21 @@ app.post("/update_cart", function (request, response) {
             response.redirect(`./products.html?products_key=${prod_key}`);
             console.log(request.session);
            });
-           
+        //use in order to access the cart object
 app.post("/get_cart", function (request, response) {
             response.json(request.session.cart)});
-
+        // Go to the cart
+app.post("/ge_to_cart", function (request, response) {
+    if (request.session.cart != null) {
+        response.redirect('./cart.html');
+    }
+    else {
+        console.log(request.session.cart);
+        var prod_key = request.body.products_key;
+        response.write('You have no items in your cart!');
+        response.redirect(`./store.html?products_key=${prod_key}`);
+    }
+})
 // process purchase request (validate quantities, check quantity available)
 app.post("/purchase", function(request, response, next){
     console.log(request.body);
@@ -107,7 +120,7 @@ app.post("/purchase", function(request, response, next){
         response.redirect("./login.html?");
         
     } else {
-        response.redirect("./index.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
+        response.redirect("./products.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
     }});
 
 //--------------------------Log-in-------------------------------- //

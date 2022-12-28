@@ -19,8 +19,7 @@ var products = require(__dirname + '/products.json');
 var express = require('express');
 var fs = require('fs')
 var app = express();
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
+
 //variable to store product data 
 var obj_num = {};
 var user_data = './user_data.json';
@@ -64,7 +63,7 @@ app.post("/purchase", function(request, response, next){
             if(isNonNegInt(q,false) == false) {
                 errors['quantity_error'+i] = isNonNegInt(q,true);
             }
-            if (q > products[i].amt_ava) {  //Check to see if there is enough stock left
+            if (q > products[i].amt_ava) {  //Check to see if there is enough stock left vgjh
                 errors['stock_outage' + i ] = `We currently don't have ${(q)} ${products[i].name}s. Please check back later!`
             }
         }
