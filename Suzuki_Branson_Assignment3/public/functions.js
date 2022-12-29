@@ -1,8 +1,11 @@
 //taken from example assignment 3
+
+const { request } = require("express");
+
 // This function asks the server for a "service" and converts the response to text. 
 function loadJSON(service, callback) {   
     var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
+        xobj.overrideMimeType("application/json");
     xobj.open('POST', service, false);
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == "200") {
@@ -13,6 +16,7 @@ function loadJSON(service, callback) {
     xobj.send(null);  
  }
 
+
 // This function makes a navigation bar from a products_data object
 
 function nav_bar(this_product_key, products_data) {
@@ -21,4 +25,6 @@ function nav_bar(this_product_key, products_data) {
         if (products_key == this_product_key) continue;
         document.write(`<a href='./products.html?products_key=${products_key}'>${products_key}<a>&nbsp&nbsp&nbsp;`);
     }
+    document.write(`<a href="login.html" class="text-white-50 fw-bold">Login</a>`)
 }
+

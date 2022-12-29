@@ -3,7 +3,6 @@
 
 h1{
     text-align: center;
-    padding-top: 200px;
 }
 head {
     text-align: center;
@@ -31,6 +30,40 @@ footer {
 }
 h5 {
     text-align: center;
+}
+nav {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: rgb(122, 122, 122);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+table, td {
+    text-align: center;
+    border: 3px solid;
+    width: 800px;
+    border-collapse: collapse;
+    border-color: grey;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+}
+th {
+    text-align: center;
+    border: 5px solid;
+    border-collapse: collapse;
+    background-color: white;
+    border-color: grey;
+    font-size: larger;
+}
+img {
+    width: 70px;
+    height: 70px;
+}
+div {
+    padding: 15px;
 }
 nav {
     display: flex;

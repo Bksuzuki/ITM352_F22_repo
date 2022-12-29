@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="./products.js" type="text/javascript"></script>
+    <script src="./functions.js"></script>
     <script>
-        // Load functions from example assignment 3
-        src="./functions.js";
-        var products;
-        loadJSON('get_products', function (response) {
+          // Load functions from example assignment 3
+        var products_data;
+        loadJSON('get_products_data', function (response) {
             // Parsing JSON string into object
             products_data = JSON.parse(response);
         });
+        var cart;
         loadJSON('get_cart', function (response) {
             // Parsing JSON string into object
             cart = JSON.parse(response);
         });
+        var this_product_key = ''
     </script>
-    <script src="./products.js" type="text/javascript"></script>
+   
     <script src="./functions.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,54 +25,105 @@
     <!--Template taken from w3 Schools-->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
-  <link rel="stylesheet" href="./css/products_home_style.css">
+  <link rel="stylesheet" href="./css/cart.css">
     <title>Cart</title>
+    
 </head>
 <body>
-    
-    <script> 
-       
-       var subtotal = 0;
+    <nav class="navbar navbar-inverse"><script> nav_bar(this_product_key, products_data);</script></nav>
+    <h2>THE COUNTDOWN</h2>
+    <h4>Your Cart</h4>
+    <div class="cart_table">
+        <table>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Delete From Cart</th>
+    <script>
+        //Modified Anthony Lee's (Spring 2022) Assignment 3 in order to display cart with three different product keys
+        var subtotal = 0;
+        var shipping = 0;
+        var total = 0;
 
-for(let products_key in cart) {
-    let products = products_data[products_key];
-    for(let i in cart[products_key]) {
-        qty = cart[products_key][i];
-        var extended_price = qty * products[i].price;
-        var subtotal = subtotal + extended_price;
-        console.log(extended_price);
-        console.log(subtotal);
-        if  (qty > 0) {
-            
-        document.write(`
+        console.log(products_data);
+        console.log(cart)
         
-        
-        <div class = "Cart-Items pad">
-            <div class = "image-box">
-                <img src = "${products[i].image}" style={{ height=120px}}/>
-            </div>
-        <div class = "about">
-                <h1 class="title">${products_key}: ${products[i].name}</h1>
-        </div>
-        <div class="counter">
-            <div class="count">Quantity: ${qty}</div>
-        </div>
-        <div class = "prices">
-            <div class="amount">$${extended_price}</div>
-            <div class = "remove">
-                <u>
-                    <form name = "remove" action = "/delete_in_cart" method = "POST">
-                        <button class="removecart" type="submit">Remove</button>
-                        <input type = "hidden" name="pkey" value="${products_key}">
-                        <input type = "hidden" name="pindex" value="${i}">
-                    </form>
-                </u>
-            </div>
-        </div>
-        </div>
-          `);
-        }}
-}
-        </script>
+        if (cart['Watches']){
+            for (i=0; i < cart['Watches'].length; i++){
+                if (cart['Watches'][i]>0){
+                    price = products_data['Watches'][i]['price'];
+                    extended_price = price * parseInt(cart['Watches'][i]);
+                                        subtotal += extended_price;
+                    document.write(`
+                        <tr><form action="/delete_item" method="POST">
+                            <input type="hidden" id="product_id" name="product_id" value=${i}>
+                            <input type="hidden" id="products_key" name="products_key" value="stickers">
+                            <td>${products_data['Watches'][i]['name']}<br><img src="${products_data['Watches'][i]['image']}">
+                            <td>${cart['Watches'][i]}</td>
+                            <td>$${price.toFixed(2)}</td>
+                            <td><input type="submit" value="X"></td>
+                        </form></tr>
+                                `)
+                }
+            }
+        }
+        if (cart['Glasses']){
+            for (i=0; i < cart['Glasses'].length; i++){
+                if (cart['Glasses'][i]>0){
+                    price = products_data['Glasses'][i]['price'];
+                    extended_price = price * parseInt(cart['Glasses'][i]);
+                                        subtotal += extended_price;
+                    document.write(`
+                        <tr><form action="/delete_item" method="POST">
+                            <input type="hidden" id="product_id" name="product_id" value=${i}>
+                            <input type="hidden" id="products_key" name="products_key" value="stickers">
+                            <td>${products_data['Glasses'][i]['name']}<br><img src="${products_data['Glasses'][i]['image']}">
+                            <td>${cart['Glasses'][i]}</td>
+                            <td>$${price.toFixed(2)}</td>
+                            <td><input type="submit" value="X"></td>
+                        </form></tr>
+                                `)
+                }
+            }
+        }
+        if (cart['Suits']){
+            for (i=0; i < cart['Suits'].length; i++){
+                if (cart['Suits'][i]>0){
+                    price = products_data['Suits'][i]['price'];
+                    extended_price = price * parseInt(cart['Suits'][i]);
+                                        subtotal += extended_price;
+                    document.write(`
+                        <tr><form action="/delete_item" method="POST">
+                            <input type="hidden" id="product_id" name="product_id" value=${i}>
+                            <input type="hidden" id="products_key" name="products_key" value="stickers">
+                            <td>${products_data['Suits'][i]['name']}<br><img src="${products_data['Suits'][i]['image']}">
+                            <td>${cart['Suits'][i]}</td>
+                            <td>$${price.toFixed(2)}</td>
+                            <td><input type="submit" value="X"></td>
+                        </form></tr>
+                                `)
+                }
+            }
+        }
+        var tax = (subtotal * 0.04)
+                        var shippingfee = 0;
+                        // Subtotal if less than $20
+                            if (subtotal < 2000){
+                                shippingfee = (20);
+                            // Subtotal if more than $2000
+                            } 
+                            else if (subtotal > 2000) {
+                                shippingfee = 0;
+                            }
+                        // Total Calculations
+                            var total = (subtotal + shippingfee + tax)
+    </script>
+    </table>
+    <br></br>
+    <script>document.write(`<h4>Tax: $${tax.toFixed(2)} </h4><p><h3><b>Total: $${total.toFixed(2)}</b></h3></p>`)</script>
+    <hr><a href="invoice.html" class="text-white-50
+       fw-bold">Checkout</a></hr>
+    </div>
+    </body>
 </body>
 </html>

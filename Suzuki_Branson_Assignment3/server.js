@@ -24,20 +24,27 @@ var app = express();
 
 var session = require('express-session');
 var products_data = require(__dirname + '/products.json');
+var user_data = require(__dirname + '/user_data.json');
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
 
 //variable to store product data 
 var obj_num = {};
-var user_data = './user_data.json';
+
 const { response } = require('express');
+const { request } = require('node:http');
 var logged_in = {};
 
-// monitor all requests  
+// Monitor all requests  
 app.all('*', function (request, response, next) {
-   console.log(request.method + ' to ' + request.path);
-   next();
+    console.log(`Got a ${request.method} to path ${request.path}`);
+    // Initialize an object to store the cart in the session
+    if(typeof request.session.cart == 'undefined') { request.session.cart = {}; };
+    if(typeof request.session.sessionID == 'undefined') {request.session.sessionID = {}};
+
+    next();
 });
 
 //get product data for pages
@@ -52,6 +59,7 @@ app.get("/products.js", function(request, response, next)
             var products_str = `var products = ${JSON.stringify(products)};`;
             response.send(products_str);
         });
+
         //update the cart object & arrays
 app.post("/update_cart", function (request, response) {
             console.log(request.session);
@@ -62,11 +70,14 @@ app.post("/update_cart", function (request, response) {
             response.redirect(`./products.html?products_key=${prod_key}`);
             console.log(request.session);
            });
+
         //use in order to access the cart object
-app.post("/get_cart", function (request, response) {
-            response.json(request.session.cart)});
+    app.post("/get_cart", function (request, response) {
+            response.json(request.session.cart);
+        });
+
         // Go to the cart
-app.post("/ge_to_cart", function (request, response) {
+app.post("/get_to_cart", function (request, response) {
     if (request.session.cart != null) {
         response.redirect('./cart.html');
     }
@@ -77,6 +88,7 @@ app.post("/ge_to_cart", function (request, response) {
         response.redirect(`./store.html?products_key=${prod_key}`);
     }
 })
+
 // process purchase request (validate quantities, check quantity available)
 app.post("/purchase", function(request, response, next){
     console.log(request.body);
@@ -124,42 +136,40 @@ app.post("/purchase", function(request, response, next){
     }});
 
 //--------------------------Log-in-------------------------------- //
-
 if (fs.existsSync(user_data)) {
     // Lab 13 Example
     var user_data = "./user_data.json";
     var data_str = fs.readFileSync(user_data, 'utf-8');
     var user_str = JSON.parse(data_str);
 };
-//Login Request
-    app.post("/login", function (request, response) {
+// Taken from File I/O Exercise 4
+app.post("/login", function(request, response) {
+    // Print body in console
+        console.log(request.body);
+    // Force submitted email into lowercase
+        let email_input = request.body.email.toLowerCase();
+        // If username exists -> Check if password matches -> Session LoginID becomes email
+            if (typeof user_str[email_input] != 'undefined') {
+                if (user_str[email_input].password == request.body.password) {
+                    request.session.loginID = email_input;
+                    response.redirect(`./index.html`)
+                } else {
+                    response.redirect(`.index.html`);
+            }}
+                else {
+                    response.send(`Email is not registered yet!`)
+                }
+    // Print Session LoginID in console
+        console.log(request.session.loginID)
+        });
 
-        // Process login form POST and redirect to logged in page if ok, back to login page if not
-        var the_username = request.body['email'].toLowerCase();
-        //save username in the event of password change
-        logged_in = the_username;
-        var the_password = request.body['password'];
-        if (typeof user_str[the_username] != 'undefined') {
-            if (user_str[the_username].password == the_password) {
-                //IR4: begins counter for user in terms of how many times they logged in
-                user_str[the_username].count = user_str[the_username].count+1;
-                //creates variables to pass into query string for the invoice to display personalized information
-                var time_stamp = user_str[the_username].time;
-                var user_count = user_str[the_username].count
-                var custom_name = user_str[the_username].name;
-                fs.writeFileSync(user_data, JSON.stringify(user_str));
-                 // Redirect with obj_num, which stores the request body of the products page and also the custome name, timestamp, and user count for the specific user
-                response.redirect('./invoice.html?'+ '&' + obj_num + '&' + 'name='+ custom_name + '&' + 'time=' + time_stamp + '&' + 'count='+user_count);
-                //changes the timestamp on the users information in order to update when they logged in last but only after the previous time is displayed on invoice
-                var current = Date()
-                user_str[the_username].time = current;
-            } else {
-                response.redirect(`./login.html?wrongpassword`);
-            }
-            return;
-        }
-        response.redirect(`./login.html?nousername`);
-    });
+        // Request user data from client's session
+            app.post("/get_user_data", function (request, response) {
+                if (typeof request.session.loginID == 'undefined') {
+                    request.session.loginID = null;
+                }
+                response.json(request.session.loginID);
+            });
 
 //-------------------------Registration--------------------------- //
 // Data validation taken and modified from Blake Saari's Spring 2022 assignment 2
