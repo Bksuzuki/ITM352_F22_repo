@@ -27,27 +27,7 @@
     <h1>THE COUNTDOWN</h1>
 </head>
 <body>
-<script>
-    //IR4 and personalization recieve paramters from the URL and process name, timestamp, counter, and if first time logging in, special message for new user
-    let params = (new URL(document.location)).searchParams;
-        if (params.has('name')) {
-            var username = params.get('name');
-            document.write(`<p>Thank you for shopping with us, ${username}!<p>`);
-        };
-        if (params.has('time')) {
-            var last_time = params.get('time');
-            document.write(`<p>The last time you logged in was ${last_time}!<p>`);
-        };
-        if (params.has('count')) {
-            var counter = params.get('count');
-            document.write(`<p>You've shopped with us ${counter} times!<p>`);
-        };
-        if (params.has('first')){
-            document.write(`<p>This is your first time shopping with us. Welcome!<p>`);
-        }
-        
-    
-</script>
+
 <div class="page-content container">
                         <div class="cart_table">
                             <table>
@@ -194,15 +174,11 @@
                     </script>
                     </div>
     <!-- Redirect to home page or to account update page -->
-       <div id="thanks"><br>Thank you for your order! Your estimated shipping time is 1-3 business days. Please shop again at The Countdown! </br></div>
-       <hr><a href="index.html" class="text-white-50
-       fw-bold">Log Out and Go Back To Home Page</a></hr>
+       <div id="thanks"><br>Your estimated shipping time is 1-3 business days.</br></div>
+       <form name = "purchase" action = "./purchase" method="post">
+        <button class="button" type="purchase" value="purchase" name="purchase">Confirm Purchase</button></form>
         <!--form to pass params to the update registration page-->
-       <form name = "update" action = "./update" method="POST">
-        <hr>Need to change account settings?</hr>
-            <p><button type="submit" value="update" name="update">Update Information</button></p>
-        </div>
-    </form>
+
 </style>
 </body>
 </html>

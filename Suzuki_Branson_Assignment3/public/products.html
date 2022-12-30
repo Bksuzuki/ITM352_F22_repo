@@ -4,7 +4,8 @@
 <script src="./products.js" type="text/javascript"></script>
 <script src="./functions.js"></script>
 <script>
-     
+
+
         
 //Help form Daniel Port on alert message section
 const params = (new URL(document.location)).searchParams;
@@ -53,6 +54,11 @@ var cart;
             //Parsing JSON string into object
            cart = JSON.parse(response);
         });
+var user_data;
+        loadJSON('get_user_data', function(response) {
+                // Parsing JSON string into object
+                user_data = JSON.parse(response);
+            });
 </script>
 
 <head>
@@ -67,16 +73,35 @@ var cart;
 </head>
 <body>
     <nav class="navbar navbar-inverse">
+
+    <!--Add login to navbar-->
               <script>
-                nav_bar(products_key, products);</script>
-              </script>
+                nav_bar(products_key, products);
+                if (user_data != 'undefined')
+                             {document.write(`<h6>${user_data}</h6>
+                             <form name = "logout" action ="/logout" method="get">
+                             <div class="button"> <button class="buttons" role="button">Logout</button>
+                             </div>
+                             </form>`)}
+                             else {
+                document.write(`
+                                 <h6>Not logged in</h6>
+                                 <form name = "login" action = "login.html" method="get">
+                                     <div class = "button-box">
+                                         <button class="buttons" role="button">Login</button>
+                                         </div>
+                                         </form>`)
+                             }
+            </script>
+                             
+              
           </div>
         </div>
       </nav>
 <!-- Title -->
   <div class="text-center">
     <h1>THE COUNTDOWN</h1>
-    <h6>We carry premium watches of all different prices and styles to accomodate your needs!</h6>
+    <h6>We carry premium watches, suits, and glasses of all different prices and styles to accomodate your needs!</h6>
   </div>
 
 
@@ -96,8 +121,6 @@ var cart;
         // Added ID of quantity errors
         order_str+=`<input type="hidden" name="products_key" value="${products_key}">`
         
-       
-    
         for(i = 0; i < products.length; i++) {
            qty = 0;
             if (typeof cart[products_key] != 'undefined'){
@@ -115,7 +138,6 @@ var cart;
       </section>
             `;
         };
-     
         console.log(params);
         document.write(order_str);
     </script>
@@ -130,7 +152,7 @@ var cart;
     <input id="update_cart_button" type="submit" class="button" value="Update Cart" name="add_to_cart" onclick=""></form>
     <br></br>
     <form name = "get_to_cart" action = "/cart.html" method="GET">
-        <button class="button" type="get_to_cart" value="get_to_cart" name="get_to_cart">Go to Cart</button>
+        <button class="button" type="get_to_cart" value="get_to_cart" name="get_to_cart">Go to Cart</button></form>
 </footer>
 </body>
 </html>

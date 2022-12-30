@@ -2,7 +2,7 @@
 // Made by Branson Suzuki Fall 2022
 // Layout taken from Assignment 1 Workshop Module//
 //function (isNonNegInt) taken from example 1 assignment
-// Copied and Modified Blake Saari's Spring 2022 Assignment 2 server.js 
+// Copied and Modified Blake Saari's Spring 2022 Assignment 3 server.js and Anthony Lee's Spring 2022 Assignment 3
 // Determines valid quantity (If "q" is a negative integer)
 function isNonNegInt(q, return_errors = false) {
     errors = []; // assume no errors at first
@@ -25,8 +25,9 @@ var app = express();
 var session = require('express-session');
 var products_data = require(__dirname + '/products.json');
 var user_data = require(__dirname + '/user_data.json');
-
-
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
+const res = require('express/lib/response');
 app.use(express.urlencoded({ extended: true }));
 app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
 
@@ -88,54 +89,52 @@ app.post("/get_to_cart", function (request, response) {
         response.redirect(`./store.html?products_key=${prod_key}`);
     }
 })
+// Delete entire cart
+app.post("/delete_entire_cart", function (request, response) {
+    request.session.cart = 'undefined';
+    console.log(request.session.cart);
+    response.redirect('./index.html')
+})
 
-// process purchase request (validate quantities, check quantity available)
-app.post("/purchase", function(request, response, next){
-    console.log(request.body);
-    var q;
-    var has_quantities = false;
-    var errors = {};
-    //advice for later: serialize error object; find better way to pass errors back and forth for Assignment2
-    //Help from Professor Port
-    for (let i in products) {
-        q = request.body['quantity' + i];
-        if (typeof q != 'undefined') {
-            console.log(q);
-            // Check whether there are even quantities that have been inputted
-            if(q>0) {
-                has_quantities = true;
-            }
-            // Validates data with isNonNegInt function
-            if(isNonNegInt(q,false) == false) {
-                errors['quantity_error'+i] = isNonNegInt(q,true);
-            }
-            if (q > products[i].amt_ava) {  //Check to see if there is enough stock left
-                errors['stock_outage' + i ] = `We currently don't have ${(q)} ${products[i].name}s. Please check back later!`
-            }
-        }
-    };
-   
-    // This code is to print out an error stating that the user needs to select quantites instead of leaving it blank
-    if(has_quantities == false) {
-        errors['no_selections_error'] = "Please select some items to purchase!";
+// Delete item within cart
+app.post('/delete_item_in_cart', (request, response) => {
+    key = request.body.products_key;
+    id = request.body.product_id;
+    console.log(request.session.cart[key][request.body.product_id]);
+    request.session.cart[key][request.body.product_id] = '';
+    response.redirect('back');
+ })
+
+app.get('/checkout', (request, response) => {
+    if (request.session.loginID == 'undefined') {
+        response.redirect('./login.html')
     }
-    let quantity_object = qs.stringify(request.body);
-    // This code is for when there are no errors and will move the user on towards the invoice.html file I have instead of directing them back to products display (like when we do have an error)
-    
-    if (Object.keys(errors).length == 0) {
-        //If quantities are valid, remove quantities from the quantity available.
-        for(let i in products){
-            products[i].amt_ava -= Number(request.body['quantity' + i]);
-        }
-        //store quantities in obj_num
-        obj_num = quantity_object;
-        response.redirect("./login.html?");
-        
-    } else {
-        response.redirect("./products.html?" +  qs.stringify(request.body) + '&' + qs.stringify(errors));
-    }});
+    else {
+        var user_data = './user_data.json';
+        if (fs.existsSync(user_data)) {
+            // Lab 13 Example
+            var user_data = "./user_data.json";
+            var data_str = fs.readFileSync(user_data, 'utf-8');
+            var user_str = JSON.parse(data_str);}
+        response.redirect(`./invoice.html`)
+    }
+})
 
+//get the user session ID for use
+app.post("/get_user_data", function (request, response) {
+    if (typeof request.session.loginID == 'undefined') {
+        request.session.loginID = 'undefined';
+    }
+    response.json(request.session.loginID);
+});
+app.get("/logout",(request, response)=>{
+    if (request.session.loginID) {
+        delete request.session.loginID;
+    }
+    response.redirect("/index.html");
+    });
 //--------------------------Log-in-------------------------------- //
+var user_data = './user_data.json';
 if (fs.existsSync(user_data)) {
     // Lab 13 Example
     var user_data = "./user_data.json";
@@ -154,7 +153,7 @@ app.post("/login", function(request, response) {
                     request.session.loginID = email_input;
                     response.redirect(`./index.html`)
                 } else {
-                    response.redirect(`.index.html`);
+                    response.send(`Password incorrect!`);
             }}
                 else {
                     response.send(`Email is not registered yet!`)
@@ -235,43 +234,39 @@ app.post("/update", function(request, response){
 
     response.redirect('./update.html?'+'user='+logged_in);
 })
-// ---------------------------- Change Registration Details -------------------------------- // 
-//Validation taken and modified from Blake Saari's Spring 2022 Assignment 2
-app.post("/change_pass", function (request, response) {
-// Start with no errors
-var reset_errors = {};
-//use stored username to access information since 
-var curr_password = user_str[logged_in].password
-    // Validates that both new passwords are identical
-    if(request.body['newpassword'] != request.body['repeatpassword']) {
-    reset_errors['no_match'] = `The passwords you entered do not match`
-    }
-    // Validates that password is at least 10 characters long
-    if(request.body.newpassword.length < 10) {
-    reset_errors['short_pass'] = `Password must be at least 10 characters`
-    }
-    // Validates that new password is different than current password
-    if(request.body.newpassword == curr_password) {
-    reset_errors['diff_pass'] = `Your new password must be different from your old password`
-    }
-// When there are no errors then change user information
-if (Object.keys(reset_errors).length == 0) {
-    user_str[logged_in].password = request.body.newpassword;
-    console.log(request.body.newpassword)
-    // Write new password into user_data.json
-    fs.writeFileSync(user_data, JSON.stringify(user_str), "utf-8");
-   //take back to update registration page with success message
-    response.redirect('./update.html?'+'success');
-    return;
-}
-else {
-    // Request errors
-    let params = new URLSearchParams(request.body);
-    // Redirect back to update registration page with errors in string
-    response.redirect('update.html?' + qs.stringify(reset_errors));
-}
-
-})
+//Mailing post. Taken from example and some points adapted from Blake Saari's Spring 2022 Repo
+//Nodemailer module was not found. Could not get the mail system to work
+app.post('/purchase', (request, response) => {
+    
+  //  const transporter = nodemailer.createTransport({
+   //    host: "mail.hawaii.edu",
+  //     port: 25,
+   //    secure: false,
+   //    tls: {
+          rejectUnauthorized: false
+   //    }
+   // });
+ 
+    var user_email = request.session.loginID;
+    var mailOptions = {
+       from:'invoice@thecountdown.com',
+       to: user_email,
+       subject: 'The Countdown Invoice',
+       html: readFile('./public/invoice.html', 'utf8')
+    };
+ 
+    //transporter.sendMail(mailOptions, (error, info) => {
+   //    if (error) {
+     //     invoice_str = "There was an error and your invoice could not be mailed";
+    //      console.log(error);
+    //   } else {
+    //      invoice_str = `Your invoice was mailed to ${user_mail}`;
+    //   }
+    //   response.send(invoice_str);
+   // })
+    request.session.destroy();
+   response.redirect("./index.html");
+ })
 //--------------------------------------------------------------
 // route all other GET requests to files in public 
 app.use(express.static('./public'));

@@ -16,7 +16,7 @@ function loadJSON(service, callback) {
     xobj.send(null);  
  }
 
-
+ 
 // This function makes a navigation bar from a products_data object
 
 function nav_bar(this_product_key, products_data) {
@@ -25,6 +25,5 @@ function nav_bar(this_product_key, products_data) {
         if (products_key == this_product_key) continue;
         document.write(`<a href='./products.html?products_key=${products_key}'>${products_key}<a>&nbsp&nbsp&nbsp;`);
     }
-    document.write(`<a href="login.html" class="text-white-50 fw-bold">Login</a>`)
 }
 

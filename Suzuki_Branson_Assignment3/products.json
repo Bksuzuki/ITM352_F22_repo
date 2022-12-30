@@ -3,7 +3,7 @@
         "name": "Rolex",
         "price": 20000.00,
         "image": "./images/Rolex.jpeg", 
-        "description": "Extreme luxury watch made to break the bank.",
+        "description": "",
         "amt_ava": 11
     },
     
@@ -11,7 +11,7 @@
         "name": "G-Shock",
         "price": 400.00,
         "image": "./images/G-shock.jpeg",
-        "description": "Classy, practical watch for those seeking utility.",
+        "description": "",
         "amt_ava": 87
     },
     
@@ -19,7 +19,7 @@
         "name": "Apple Watch",
         "price": 500.00,
         "image": "./images/Apple_Watch.jpg",
-        "description": "Stylish, sleek watch designed with technological interaction and accesibility.",
+        "description": "",
         "amt_ava": 128
     },
     
@@ -27,7 +27,7 @@
         "name": "Cartier",
         "price": 2500.00,
         "image": "./images/Cartier.jpeg",
-        "description": "Premium quality watch designed for those who want to impress.",
+        "description": ".",
         "amt_ava": 34
     },
     
@@ -35,7 +35,7 @@
         "name": "Nixon",
         "price": 200.00,
         "image": "./images/Nixon.jpeg",
-        "description": "Simply styled watch at an affordable price.",
+        "description": "",
         "amt_ava": 70
     }
 ],
@@ -43,82 +43,82 @@
         {
             "name": "Louis Vuitton",
             "price": 10000.00,
-            "image": "./images/Rolex.jpeg", 
-            "description": "Extreme luxury watch made to break the bank.",
-            "amt_ava": 11
+            "image": "./images/Louis.jpg", 
+            "description": "",
+            "amt_ava": 62
         },
         
         {
             "name": "Alfani",
             "price": 450.00,
-            "image": "./images/G-shock.jpeg",
-            "description": "Classy, practical watch for those seeking utility.",
-            "amt_ava": 87
+            "image": "./images/Alfani.jpg",
+            "description": "",
+            "amt_ava": 89
         },
         
         {
             "name": "Tommy Hilfiger",
             "price": 350.00,
-            "image": "./images/Apple_Watch.jpg",
-            "description": "Stylish, sleek watch designed with technological interaction and accesibility.",
-            "amt_ava": 128
+            "image": "./images/Tommy.jpg",
+            "description": "",
+            "amt_ava": 152
         },
         
         {
             "name": "Cartier",
             "price": 2250.00,
-            "image": "./images/Cartier.jpeg",
-            "description": "Premium quality watch designed for those who want to impress.",
-            "amt_ava": 34
+            "image": "./images/Cartier.jpg",
+            "description": "",
+            "amt_ava": 45
         },
         
         {
             "name": "Balenciaga",
             "price": 2000.00,
-            "image": "./images/Nixon.jpeg",
-            "description": "Simply styled watch at an affordable price.",
-            "amt_ava": 70
+            "image": "./images/Balenciaga.jpg",
+            "description": "",
+            "amt_ava": 126
         }
     ],
     "Glasses":[
         {
             "name": "Raybanz",
             "price": 200.00,
-            "image": "./images/Rolex.jpeg", 
-            "description": "Extreme luxury watch made to break the bank.",
-            "amt_ava": 11
+            "image": "./images/Rays.jpg", 
+            "description": "",
+            "amt_ava": 54
         },
         
         {
             "name": "Oakley",
             "price": 150.00,
-            "image": "./images/G-shock.jpeg",
-            "description": "Classy, practical watch for those seeking utility.",
-            "amt_ava": 87
+            "image": "./images/Oakley.jpg",
+            "description": "",
+            "amt_ava": 90
         },
         
         {
             "name": "Tom Ford",
             "price": 500.00,
-            "image": "./images/Apple_Watch.jpg",
-            "description": "Stylish, sleek watch designed with technological interaction and accesibility.",
-            "amt_ava": 128
+            "image": "./images/Tom.jpg",
+            "description": "",
+            "amt_ava": 142
         },
         
         {
             "name": "Salt",
             "price": 2500.00,
-            "image": "./images/Cartier.jpeg",
-            "description": "Premium quality watch designed for those who want to impress.",
-            "amt_ava": 34
+            "image": "./images/Salt.jpg",
+            "description": "",
+            "amt_ava": 32
         },
         
         {
             "name": "Lafont",
             "price": 200.00,
-            "image": "./images/Nixon.jpeg",
-            "description": "Simply styled watch at an affordable price.",
-            "amt_ava": 70
+            "image": "./images/Lafont.jpeg",
+            "description": "",
+            "amt_ava": 65
         }
     ]
 }

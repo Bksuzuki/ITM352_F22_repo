@@ -55,7 +55,7 @@
                     extended_price = price * parseInt(cart['Watches'][i]);
                                         subtotal += extended_price;
                     document.write(`
-                        <tr><form action="/delete_item" method="POST">
+                        <tr><form action="/delete_item_in_cart" method="POST">
                             <input type="hidden" id="product_id" name="product_id" value=${i}>
                             <input type="hidden" id="products_key" name="products_key" value="stickers">
                             <td>${products_data['Watches'][i]['name']}<br><img src="${products_data['Watches'][i]['image']}">
@@ -74,7 +74,7 @@
                     extended_price = price * parseInt(cart['Glasses'][i]);
                                         subtotal += extended_price;
                     document.write(`
-                        <tr><form action="/delete_item" method="POST">
+                        <tr><form action="/delete_item_in_cart" method="POST">
                             <input type="hidden" id="product_id" name="product_id" value=${i}>
                             <input type="hidden" id="products_key" name="products_key" value="stickers">
                             <td>${products_data['Glasses'][i]['name']}<br><img src="${products_data['Glasses'][i]['image']}">
@@ -93,7 +93,7 @@
                     extended_price = price * parseInt(cart['Suits'][i]);
                                         subtotal += extended_price;
                     document.write(`
-                        <tr><form action="/delete_item" method="POST">
+                        <tr><form action="/delete_item_in_cart" method="POST">
                             <input type="hidden" id="product_id" name="product_id" value=${i}>
                             <input type="hidden" id="products_key" name="products_key" value="stickers">
                             <td>${products_data['Suits'][i]['name']}<br><img src="${products_data['Suits'][i]['image']}">
@@ -121,8 +121,8 @@
     </table>
     <br></br>
     <script>document.write(`<h4>Tax: $${tax.toFixed(2)} </h4><p><h3><b>Total: $${total.toFixed(2)}</b></h3></p>`)</script>
-    <hr><a href="invoice.html" class="text-white-50
-       fw-bold">Checkout</a></hr>
+    <form name = "checkout" action = "./checkout" method="GET">
+        <button class="button" type="checkout" value="checkout" name="Checkout">Checkout</button></form>
     </div>
     </body>
 </body>
